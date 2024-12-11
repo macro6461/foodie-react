@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 import dummyData from "./dummy.json";
-
+import Restaurant from "./Restaurant";
 // Define the type for the props
 interface FoodieReactProps {
   GMapsApiKey: string; // Prop is required and must be a string
@@ -140,6 +140,7 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
         {showFoodie ? "CLOSE" : "OPEN"}
       </button>
       <h1 className="header">Welcome to Foodie for React!</h1>
+      <Restaurant />
       <input
         id="textInput"
         type="text"
