@@ -1,9 +1,10 @@
 import React from "react";
+import "./index.css";
 interface FoodieReactProps {
     GMapsApiKey: string;
     radius?: number;
     autoStart?: boolean;
-    environment: string;
+    port?: number;
 }
 declare const FoodieReact: React.FC<FoodieReactProps>;
 export default FoodieReact;

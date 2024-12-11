@@ -1,0 +1,45 @@
+.container {
+    background-color: lightblue;
+    padding: 20px;
+    border-radius:  5px;
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    width: 350px;
+}
+
+.container > ul {
+    padding-left: 0;
+}
+
+.container > ul > li {
+   display: block;
+   text-align: left;
+   margin-top: 5px;
+}
+
+/* Initial hidden state */
+.hidden {
+    transform: translateX(-100%);
+    transition: transform 0.5s ease-out;
+}
+
+/* Visible state */
+.visible {
+    transform: translateX(0);
+    transition: transform 0.5s ease-in;
+}
+
+.heading {
+    color: darkblue;
+}
+
+.opener {
+    position: absolute;
+    right: -60px;
+    height: 50px;
+    width: 60px;
+    top: 50%;
+    background-color: red;
+    z-index: 100;
+}
