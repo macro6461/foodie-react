@@ -78,5 +78,8 @@
   "proxy": "https://maps.googleapis.com",
   "exports": {
     ".": "./dist/index.js"
+  },
+  "dependencies": {
+    "react-icons": "^5.4.0"
   }
 }

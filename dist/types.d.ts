@@ -1,14 +1,19 @@
-import React from "react";
-interface EditorialSummary {
+type FoodieReactProps = {
+    GMapsApiKey: string;
+    radius?: number;
+    autoStart?: boolean;
+    port?: number;
+};
+type EditorialSummary = {
     overview: string;
-}
-interface Review {
+};
+type Review = {
     author_name: string;
     relative_time_description: string;
     text: string;
     rating: number;
-}
-interface FoodieRestaurant {
+};
+type FoodieRestaurant = {
     url: string;
     name: string;
     formatted_address: string;
@@ -19,10 +24,5 @@ interface FoodieRestaurant {
     reviews: Review[];
     editorial_summary: EditorialSummary;
     user_ratings_total: number;
-}
-interface RestaurantProps {
-    restaurant: FoodieRestaurant;
-    close: () => void;
-}
-declare const Restaurant: React.FC<RestaurantProps>;
-export default Restaurant;
+};
+export { FoodieReactProps, EditorialSummary, Review, FoodieRestaurant };

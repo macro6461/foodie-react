@@ -8,8 +8,8 @@
     [
       "babel-plugin-transform-rename-import",
       {
-        "original": "^\\.\\/Restaurant$",
-        "replacement": "./Restaurant.js"
+        "original": "^\\.\\/(Restaurant|FoodieList)$",
+        "replacement": "./$1.js"
       }
     ],
     ["@babel/plugin-proposal-class-properties", { "loose": true }],
