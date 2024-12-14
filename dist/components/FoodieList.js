@@ -27,57 +27,48 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useState, useEffect } from "react";
-import dummyData from "./dummy.json";
+import dummyData from "../dummy.json";
+import SortOptions from "./SortOptions.js";
 const FoodieList = _ref => {
   let {
     setCurrentRestaurant,
-    currentRestaurant,
     autoStart,
-    port,
+    devPort,
     GMapsApiKey,
-    radius
+    radius,
+    distanceToAndFromHaversine,
+    latitude,
+    longitude,
+    setError
   } = _ref;
   const [textSearch, setTextSearch] = useState("");
-  const [latitude, setLatitude] = useState(37.7749);
-  const [longitude, setLongitude] = useState(-122.4194);
   const [restaurants, setRestaurants] = useState([]);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     initFoodieReact();
-  }, []);
+  }, [latitude, longitude]);
   const initFoodieReact = () => {
-    if (navigator.geolocation) {
-      return navigator.geolocation.getCurrentPosition(position => {
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        setError(null); // Clear previous errors if any
-        if (autoStart) {
-          fetchNearbyRestaurantsDummy(position.coords.latitude, position.coords.longitude);
-        }
-      }, err => {
-        setLoading(false);
-        setError("Failed to fetch location. " + err);
-        return false;
-      });
+    if (latitude && longitude) {
+      setError(null); // Clear previous errors if any
+      if (autoStart) {
+        fetchNearbyRestaurantsDummy();
+      }
     } else {
-      setLoading(false);
-      setError("Geolocation is not supported by your browser.");
-      return false;
+      setError("Geolocation Not Found.");
     }
   };
   const fetchNearbyRestaurants = (lat, long) => __awaiter(void 0, void 0, void 0, function* () {
     setLoading(true);
     let thisLat = lat || latitude;
     let thisLong = long || longitude;
-    const URL = process.env.NODE_ENV === "development" ? "http://localhost:".concat(port, "/foodie/getAll?latitude=").concat(thisLat, "&longitude=").concat(thisLong, "&radius=").concat(radius, "&type=restaurant&keyword=").concat(encodeURIComponent(textSearch), "&key=").concat(GMapsApiKey) : "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".concat(thisLat, ",").concat(thisLong, "&radius=").concat(radius, "&type=restaurant&keyword=").concat(encodeURIComponent(textSearch), "&key=").concat(GMapsApiKey);
+    const URL = process.env.NODE_ENV === "development" ? "http://localhost:".concat(devPort, "/foodie/getAll?latitude=").concat(thisLat, "&longitude=").concat(thisLong, "&radius=").concat(radius, "&type=restaurant&keyword=").concat(encodeURIComponent(textSearch), "&key=").concat(GMapsApiKey) : "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".concat(thisLat, ",").concat(thisLong, "&radius=").concat(radius, "&type=restaurant&keyword=").concat(encodeURIComponent(textSearch), "&key=").concat(GMapsApiKey);
     try {
       const response = yield fetch(URL);
       const data = yield response.json();
       if (data.status === "OK") {
         // Process the restaurant data here
         setLoading(false);
-        setRestaurants(data.results); // This will contain the list of nearby restaurants
+        addDistanceToResultsAndFilter(data.results);
       } else {
         setLoading(false);
         setError("Error fetching data: " + data.status);
@@ -90,14 +81,14 @@ const FoodieList = _ref => {
     }
   });
   const getRestaurantInfo = id => __awaiter(void 0, void 0, void 0, function* () {
-    const URL = process.env.NODE_ENV === "development" ? "http://localhost:".concat(port, "/foodie/getRestaurant?place/details/json?placeid=").concat(id, "}&key=").concat(GMapsApiKey) : "https://maps.googleapis.com/maps/api/place/details/json?placeid=".concat(id, "}&key=").concat(GMapsApiKey);
+    const URL = process.env.NODE_ENV === "development" ? "http://localhost:".concat(devPort, "/foodie/getRestaurant?place/details/json?placeid=").concat(id, "}&key=").concat(GMapsApiKey) : "https://maps.googleapis.com/maps/api/place/details/json?placeid=".concat(id, "}&key=").concat(GMapsApiKey);
     try {
       const response = yield fetch(URL);
       const data = yield response.json();
       if (data.status === "OK") {
         // Process the restaurant data here
         setLoading(false);
-        setRestaurants(data.results); // This will contain the list of nearby restaurants
+        setCurrentRestaurant(data); // This will contain the list of nearby restaurants
       } else {
         setLoading(false);
         setError("Error fetching data: " + data.status);
@@ -110,17 +101,57 @@ const FoodieList = _ref => {
     }
   });
   const fetchNearbyRestaurantsDummy = (lat, long) => __awaiter(void 0, void 0, void 0, function* () {
-    setRestaurants(dummyData.all_restuarants.results);
+    addDistanceToResultsAndFilter(dummyData.all_restuarants.results);
     setLoading(false);
   });
   const getRestaurantInfoDummy = id => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(dummyData.restuarant_result.result);
     setCurrentRestaurant(dummyData.restuarant_result.result);
     setLoading(false);
   });
   const handleChange = e => {
     setTextSearch(e.target.value);
   };
+  const addDistanceToResultsAndFilter = results => {
+    let res = results.map(restaurant => {
+      const {
+        geometry,
+        place_id
+      } = restaurant;
+      let {
+        lat,
+        lng
+      } = geometry.location;
+      let distance = distanceToAndFromHaversine({
+        latitude,
+        longitude
+      }, {
+        latitude: lat,
+        longitude: lng
+      }, place_id);
+      restaurant.distance = distance;
+      return restaurant;
+    }).sort((a, b) => {
+      if (a.distance < b.distance) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    setRestaurants(res);
+  };
+  const handleSort = sortType => {
+    let res = [...restaurants];
+    setRestaurants([]);
+    res.sort((a, b) => {
+      if (sortType === "distance") {
+        return a[sortType] < b[sortType] ? -1 : 1;
+      } else {
+        return a[sortType] < b[sortType] ? -1 : 1;
+      }
+    });
+    setRestaurants(res);
+  };
+  console.log("RESTAURANTS: ", restaurants);
   return _jsxs("div", {
     children: [_jsx("input", {
       id: "textInput",
@@ -131,19 +162,27 @@ const FoodieList = _ref => {
       onClick: () => fetchNearbyRestaurantsDummy(),
       disabled: textSearch.length === 0,
       children: "Find Food"
+    }), _jsx(SortOptions, {
+      handleSort: handleSort
     }), loading ? _jsx("p", {
       children: "Fetching Restuarants..."
-    }) : _jsxs(_Fragment, {
-      children: [error ? _jsxs("p", {
-        children: ["ERROR: ", error]
-      }) : null, restaurants.length > 0 ? _jsx("ul", {
-        children: restaurants.map((restaurant, index) => _jsxs("li", {
-          onClick: () => getRestaurantInfoDummy(restaurant.place_id),
-          children: [restaurant.name, " (", restaurant.rating, " based on", " ", restaurant.user_ratings_total, " reviews)"]
-        }, index))
+    }) : _jsx(_Fragment, {
+      children: restaurants.length > 0 ? _jsx("ul", {
+        children: restaurants.map((restaurant, index) => {
+          const {
+            name,
+            place_id,
+            distance,
+            rating
+          } = restaurant;
+          return _jsxs("li", {
+            onClick: () => getRestaurantInfoDummy(place_id),
+            children: [name, " (", distance, " miles away) ", rating]
+          }, index);
+        })
       }) : _jsx("p", {
         children: "No Results Found"
-      })]
+      })
     })]
   });
 };

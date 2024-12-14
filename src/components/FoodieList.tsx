@@ -1,55 +1,49 @@
 import React, { useState, useEffect } from "react";
-import { FoodieReactProps, FoodieRestaurant } from "./types";
-import dummyData from "./dummy.json";
+import { FoodieReactProps, FoodieRestaurant } from "../types";
+import { LatLong, GoogleLatLong } from "../types";
+import dummyData from "../dummy.json";
+import SortOptions from "./SortOptions";
 
 interface FoodieListProps {
   setCurrentRestaurant: React.Dispatch<React.SetStateAction<FoodieRestaurant>>;
   currentRestaurant: FoodieRestaurant;
+  distanceToAndFromHaversine: (
+    start: LatLong,
+    stop: LatLong,
+    placeId: string
+  ) => number;
+  latitude: number;
+  longitude: number;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   setCurrentRestaurant,
-  currentRestaurant,
   autoStart,
-  port,
+  devPort,
   GMapsApiKey,
   radius,
+  distanceToAndFromHaversine,
+  latitude,
+  longitude,
+  setError,
 }) => {
   const [textSearch, setTextSearch] = useState("");
-  const [latitude, setLatitude] = useState(37.7749);
-  const [longitude, setLongitude] = useState(-122.4194);
   const [restaurants, setRestaurants] = useState([]);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     initFoodieReact();
-  }, []);
+  }, [latitude, longitude]);
 
   const initFoodieReact = () => {
-    if (navigator.geolocation) {
-      return navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
-          setError(null); // Clear previous errors if any
-          if (autoStart) {
-            fetchNearbyRestaurantsDummy(
-              position.coords.latitude,
-              position.coords.longitude
-            );
-          }
-        },
-        (err) => {
-          setLoading(false);
-          setError("Failed to fetch location. " + err);
-          return false;
-        }
-      );
+    if (latitude && longitude) {
+      setError(null); // Clear previous errors if any
+      if (autoStart) {
+        fetchNearbyRestaurantsDummy();
+      }
     } else {
-      setLoading(false);
-      setError("Geolocation is not supported by your browser.");
-      return false;
+      setError("Geolocation Not Found.");
     }
   };
 
@@ -59,7 +53,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
     let thisLong = long || longitude;
     const URL =
       process.env.NODE_ENV === "development"
-        ? `http://localhost:${port}/foodie/getAll?latitude=${thisLat}&longitude=${thisLong}&radius=${radius}&type=restaurant&keyword=${encodeURIComponent(
+        ? `http://localhost:${devPort}/foodie/getAll?latitude=${thisLat}&longitude=${thisLong}&radius=${radius}&type=restaurant&keyword=${encodeURIComponent(
             textSearch
           )}&key=${GMapsApiKey}`
         : `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${thisLat},${thisLong}&radius=${radius}&type=restaurant&keyword=${encodeURIComponent(
@@ -73,7 +67,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
       if (data.status === "OK") {
         // Process the restaurant data here
         setLoading(false);
-        setRestaurants(data.results); // This will contain the list of nearby restaurants
+        addDistanceToResultsAndFilter(data.results);
       } else {
         setLoading(false);
         setError("Error fetching data: " + data.status);
@@ -89,7 +83,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   const getRestaurantInfo = async (id: string) => {
     const URL =
       process.env.NODE_ENV === "development"
-        ? `http://localhost:${port}/foodie/getRestaurant?place/details/json?placeid=${id}}&key=${GMapsApiKey}`
+        ? `http://localhost:${devPort}/foodie/getRestaurant?place/details/json?placeid=${id}}&key=${GMapsApiKey}`
         : `https://maps.googleapis.com/maps/api/place/details/json?placeid=${id}}&key=${GMapsApiKey}`;
 
     try {
@@ -99,7 +93,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
       if (data.status === "OK") {
         // Process the restaurant data here
         setLoading(false);
-        setRestaurants(data.results); // This will contain the list of nearby restaurants
+        setCurrentRestaurant(data); // This will contain the list of nearby restaurants
       } else {
         setLoading(false);
         setError("Error fetching data: " + data.status);
@@ -113,12 +107,13 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   };
 
   const fetchNearbyRestaurantsDummy = async (lat?: number, long?: number) => {
-    setRestaurants(dummyData.all_restuarants.results);
+    addDistanceToResultsAndFilter(
+      dummyData.all_restuarants.results as unknown as FoodieRestaurant[]
+    );
     setLoading(false);
   };
 
   const getRestaurantInfoDummy = async (id: string) => {
-    console.log(dummyData.restuarant_result.result);
     setCurrentRestaurant(
       dummyData.restuarant_result.result as unknown as FoodieRestaurant
     );
@@ -128,6 +123,45 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTextSearch(e.target.value);
   };
+
+  const addDistanceToResultsAndFilter = (results: FoodieRestaurant[]) => {
+    let res = results
+      .map((restaurant: FoodieRestaurant) => {
+        const { geometry, place_id } = restaurant;
+        let { lat, lng } = geometry.location;
+        let distance = distanceToAndFromHaversine(
+          { latitude, longitude },
+          { latitude: lat, longitude: lng },
+          place_id
+        );
+        restaurant.distance = distance;
+        return restaurant;
+      })
+      .sort((a: FoodieRestaurant, b: FoodieRestaurant) => {
+        if (a.distance < b.distance) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+    setRestaurants(res);
+  };
+
+  const handleSort = (sortType: string) => {
+    let res = [...restaurants];
+    setRestaurants([]);
+    res.sort((a, b) => {
+      if (sortType === "distance") {
+        return a[sortType] < b[sortType] ? -1 : 1;
+      } else {
+        return a[sortType] < b[sortType] ? -1 : 1;
+      }
+    });
+    setRestaurants(res);
+  };
+
+  console.log("RESTAURANTS: ", restaurants);
+
   return (
     <div>
       <input
@@ -142,22 +176,24 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
       >
         Find Food
       </button>
+      <SortOptions handleSort={handleSort} />
       {loading ? (
         <p>Fetching Restuarants...</p>
       ) : (
         <>
-          {error ? <p>ERROR: {error}</p> : null}
           {restaurants.length > 0 ? (
             <ul>
-              {restaurants.map((restaurant, index) => (
-                <li
-                  key={index}
-                  onClick={() => getRestaurantInfoDummy(restaurant.place_id)}
-                >
-                  {restaurant.name} ({restaurant.rating} based on{" "}
-                  {restaurant.user_ratings_total} reviews)
-                </li>
-              ))}
+              {restaurants.map((restaurant, index) => {
+                const { name, place_id, distance, rating } = restaurant;
+                return (
+                  <li
+                    key={index}
+                    onClick={() => getRestaurantInfoDummy(place_id)}
+                  >
+                    {name} ({distance} miles away) {rating}
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p>No Results Found</p>

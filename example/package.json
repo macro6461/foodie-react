@@ -23,7 +23,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "refresh": "rm -rf node_modules && yarn"
+    "refresh": "rm -rf node_modules && yarn",
+    "start:all": "yarn refresh && yarn start"
   },
   "eslintConfig": {
     "extends": [

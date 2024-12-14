@@ -2,7 +2,7 @@ type FoodieReactProps = {
     GMapsApiKey: string;
     radius?: number;
     autoStart?: boolean;
-    port?: number;
+    devPort?: number;
 };
 type EditorialSummary = {
     overview: string;
@@ -15,6 +15,9 @@ type Review = {
 };
 type FoodieRestaurant = {
     url: string;
+    geometry: {
+        location: GoogleLatLong;
+    };
     name: string;
     formatted_address: string;
     international_phone_number: string;
@@ -24,5 +27,15 @@ type FoodieRestaurant = {
     reviews: Review[];
     editorial_summary: EditorialSummary;
     user_ratings_total: number;
+    distance: number;
+    place_id: string;
 };
-export { FoodieReactProps, EditorialSummary, Review, FoodieRestaurant };
+type LatLong = {
+    latitude: number;
+    longitude: number;
+};
+type GoogleLatLong = {
+    lat: number;
+    lng: number;
+};
+export { FoodieReactProps, EditorialSummary, Review, FoodieRestaurant, LatLong, GoogleLatLong, };

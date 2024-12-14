@@ -8,14 +8,26 @@
     width: 350px;
 }
 
-.container > ul {
+.container > div{
+    height: 100%;
+}
+
+.container input{
+    margin-right: 5px;
+}
+
+ul {
     padding-left: 0;
 }
 
-.container > ul > li {
+ul li {
    display: block;
    text-align: left;
    margin-top: 5px;
+}
+
+ul li:hover {
+    font-weight: 800;
 }
 
 /* Initial hidden state */
@@ -46,3 +58,179 @@
     border-radius: 0 15px 15px 0;
     padding: 5px 0;
 }
+
+.restaurant-footer {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;  
+    font-size: 50px;
+    height: 50px;
+}
+
+.reviewsContainer{
+    display: flex;
+    flex-direction: column; 
+    height: 100%;
+}
+
+.reviewsContainer > div{
+    flex: 1; /* Make it take up the available space */
+    overflow: hidden; 
+}
+
+.reviewsContainer > div >div {
+    max-height: 100%; /* Ensure the list does not exceed the inner container's height */
+    overflow-y: auto; /* Enable vertical scrolling if the content overflows */
+    margin: 0; /* Optional, to remove default margin */
+    padding: 10px; 
+}
+
+.authorP {
+    display: flex;       
+    justify-content: space-between; 
+    align-items: center;  
+}
+
+.reviewText {
+    overflow: hidden;
+}
+
+.reviewText.closed {
+    height: 0px;
+    transition: height 0.5s ease-out;
+}
+
+.reviewText.open {
+    height: auto;
+    transition: height 0.5s ease-in;
+}
+
+/* SPLASH ANIMATIONS */
+
+.splash {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation-delay: 1s;
+    animation: splashZoom 1s ease-in-out forwards, splashFadeOut 1s ease-in-out 4s forwards;
+  }
+
+  .splashPizza{
+    display: block;
+    background-color: red;
+    color: beige;
+    border-radius: 15px;
+    padding: 5px;
+    font-size: 50px;
+    animation: spinPizza 1s ease-in-out forwards;
+    animation-delay: 1s;
+}
+  
+  @keyframes splashZoom {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spinPizza {
+        0% {
+          transform: rotateY(0deg);
+        }
+        50% {
+          transform: rotateY(180deg);
+        }
+        100% {
+          transform: rotateY(360deg);
+        }
+  }
+  
+  @keyframes splashFadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  .splashSubtitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .splashSubtitle span:first-child {
+    opacity: 0;
+    transform: translateX(-100%);
+    animation: slideInLeft 0.5s ease-in-out forwards;
+    animation-delay: 2s;
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .splashSubtitle span:last-child {
+    opacity: 0;
+    transform: translateX(100%);
+    animation: slideInRight 0.5s ease-in-out forwards;
+    animation-delay: 2.5s;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .splashSubtitle .splashHandshake {
+    display: block;
+    margin: auto;
+    background-color: red;
+    color: beige;
+    border-radius: 15px;
+    padding: 5px;
+    font-size: 20px;
+    transform: scale(0);
+    animation: iconScale 1s ease-in-out forwards;
+    animation-delay: 3s;
+  }
+  
+  @keyframes iconScale {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+    75% {
+        opacity: 1;
+        transform: scale(0.75);
+      }
+    100% {
+      transform: scale(1);
+    }
+  }
+  

@@ -1,21 +1,14 @@
-import { useEffect, useState } from "react";
 import "./App.css";
 import FoodieReact from "foodie-react";
 
 function App() {
-  useEffect(() => {
-    console.log(process.env);
-  }, []);
-
-  console.log("APP RENDERING");
-
   return (
     <div className="App">
       <h1>MY APP</h1>
       <p>TESTING App.js in Example project (which imports my NPM library)</p>
       <FoodieReact
         GMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
-        port={process.env.REACT_APP_PORT}
+        devPort={process.env.REACT_APP_PORT}
         radius={5000}
         autoStart={true}
       />
