@@ -1,10 +1,11 @@
-import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+import { jsxs as _jsxs, jsx as _jsx, Fragment as _Fragment } from "react/jsx-runtime";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import "../index.css";
 const Reviews = _ref => {
   let {
-    reviews
+    reviews,
+    height
   } = _ref;
   const [openedReview, setOpenedReview] = useState(-1);
   const handleOpenedReview = index => {
@@ -17,9 +18,16 @@ const Reviews = _ref => {
   return _jsxs("div", {
     className: "reviewsContainer",
     children: [_jsxs("h3", {
+      style: {
+        marginBottom: 0
+      },
       children: [reviews.length || "No", " Reviews"]
     }), _jsx("div", {
-      children: reviews.length > 0 ? _jsx("div", {
+      className: "reviewsInnerContainer",
+      style: {
+        height
+      },
+      children: reviews.length > 0 ? _jsx(_Fragment, {
         children: reviews.map((review, i) => {
           const {
             author_name,
@@ -39,7 +47,7 @@ const Reviews = _ref => {
               })]
             }), _jsxs("p", {
               children: ["Rating: ", rating, " ", _jsx(FaStar, {
-                color: "yellow"
+                className: "ratingStar"
               })]
             }), _jsx("button", {
               onClick: () => handleOpenedReview(i),

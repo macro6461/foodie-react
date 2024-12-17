@@ -10,8 +10,8 @@ const SortOptions = _ref => {
     handleSort(e.target.value);
   };
   return _jsxs("div", {
-    children: [_jsx("h3", {
-      children: "Select an option:"
+    children: [_jsx("span", {
+      children: "Sort By: "
     }), _jsxs("label", {
       children: [_jsx("input", {
         type: "radio",

@@ -1,15 +1,20 @@
 .container {
     background-color: lightblue;
-    padding: 20px;
     border-radius:  5px;
     position: absolute;
     top: 0px;
+    bottom: 0px;
     height: 100%;
-    width: 350px;
+    width: 375px;
+    padding: 0 0 20px 20px;
 }
 
 .container > div{
     height: 100%;
+}
+
+#textInput {
+    margin-top:10px;
 }
 
 .container input{
@@ -20,14 +25,32 @@ ul {
     padding-left: 0;
 }
 
+.ratingStart {
+    color: yellow;
+}
+
 ul li {
    display: block;
    text-align: left;
    margin-top: 5px;
+   cursor: pointer;
 }
 
 ul li:hover {
     font-weight: 800;
+}
+
+ul li p {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0px;
+}
+
+ul li p:nth-child(2){
+    margin-bottom:10px;
+    text-align: right;
 }
 
 /* Initial hidden state */
@@ -57,32 +80,34 @@ ul li:hover {
     color: beige;
     border-radius: 0 15px 15px 0;
     padding: 5px 0;
+    cursor: pointer;
 }
 
 .restaurant-footer {
+    align-items: center;
+    bottom: 5px;
     display: flex;
-    justify-content: space-between; 
-    align-items: center;  
     font-size: 50px;
-    height: 50px;
+    justify-content: space-evenly;
+    width: 100%;
+    left: 0px;
+    position: absolute;
 }
 
-.reviewsContainer{
-    display: flex;
-    flex-direction: column; 
-    height: 100%;
+.foodieListContainer{
+    height:100%;
+    padding-right: 10px;
+    overflow-y: scroll;
 }
 
-.reviewsContainer > div{
-    flex: 1; /* Make it take up the available space */
-    overflow: hidden; 
+.reviewsInnerContainer{
+    overflow-y: scroll;
 }
 
-.reviewsContainer > div >div {
-    max-height: 100%; /* Ensure the list does not exceed the inner container's height */
-    overflow-y: auto; /* Enable vertical scrolling if the content overflows */
+.reviewsContainer > div > div {
     margin: 0; /* Optional, to remove default margin */
     padding: 10px; 
+    padding-top:0;
 }
 
 .authorP {
@@ -93,16 +118,17 @@ ul li:hover {
 
 .reviewText {
     overflow: hidden;
+    transition: height 0.5s ease-out;
 }
 
 .reviewText.closed {
     height: 0px;
-    transition: height 0.5s ease-out;
+    margin:0px;
 }
 
 .reviewText.open {
-    height: auto;
-    transition: height 0.5s ease-in;
+    height: 100%;
+    margin:auto;
 }
 
 /* SPLASH ANIMATIONS */
@@ -113,6 +139,7 @@ ul li:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-left: -20px;
     animation-delay: 1s;
     animation: splashZoom 1s ease-in-out forwards, splashFadeOut 1s ease-in-out 4s forwards;
   }

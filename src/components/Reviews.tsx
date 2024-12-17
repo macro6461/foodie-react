@@ -4,9 +4,10 @@ import { FaStar } from "react-icons/fa6";
 import "../index.css";
 interface ReviewsProps {
   reviews: Review[];
+  height: number;
 }
 
-const Reviews: React.FC<ReviewsProps> = ({ reviews }) => {
+const Reviews: React.FC<ReviewsProps> = ({ reviews, height }) => {
   const [openedReview, setOpenedReview] = useState(-1);
 
   const handleOpenedReview = (index: number) => {
@@ -19,10 +20,10 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews }) => {
 
   return (
     <div className="reviewsContainer">
-      <h3>{reviews.length || "No"} Reviews</h3>
-      <div>
+      <h3 style={{ marginBottom: 0 }}>{reviews.length || "No"} Reviews</h3>
+      <div className="reviewsInnerContainer" style={{ height }}>
         {reviews.length > 0 ? (
-          <div>
+          <>
             {reviews.map((review: Review, i: number) => {
               const { author_name, relative_time_description, rating, text } =
                 review;
@@ -35,7 +36,7 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews }) => {
                     <span>{relative_time_description}</span>
                   </p>
                   <p>
-                    Rating: {rating} <FaStar color="yellow" />
+                    Rating: {rating} <FaStar className="ratingStar" />
                   </p>
                   <button onClick={() => handleOpenedReview(i)}>
                     See Review
@@ -44,7 +45,7 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews }) => {
                 </div>
               );
             })}
-          </div>
+          </>
         ) : null}
       </div>
     </div>

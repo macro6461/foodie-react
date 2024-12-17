@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FoodieReactProps, FoodieRestaurant } from "../types";
-import { LatLong, GoogleLatLong } from "../types";
+import { LatLong } from "../types";
 import dummyData from "../dummy.json";
+import { FaStar } from "react-icons/fa6";
 import SortOptions from "./SortOptions";
 
 interface FoodieListProps {
@@ -154,33 +155,33 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
       if (sortType === "distance") {
         return a[sortType] < b[sortType] ? -1 : 1;
       } else {
-        return a[sortType] < b[sortType] ? -1 : 1;
+        return a[sortType] > b[sortType] ? -1 : 1;
       }
     });
     setRestaurants(res);
   };
 
-  console.log("RESTAURANTS: ", restaurants);
-
   return (
-    <div>
-      <input
-        id="textInput"
-        type="text"
-        value={textSearch}
-        onChange={handleChange} // Listen for changes to the input value
-      />
-      <button
-        onClick={() => fetchNearbyRestaurantsDummy()}
-        disabled={textSearch.length === 0}
-      >
-        Find Food
-      </button>
-      <SortOptions handleSort={handleSort} />
+    <div className="foodieListContainer">
+      <div className="foodieListHeader">
+        <input
+          id="textInput"
+          type="text"
+          value={textSearch}
+          onChange={handleChange} // Listen for changes to the input value
+        />
+        <button
+          onClick={() => fetchNearbyRestaurantsDummy()}
+          disabled={textSearch.length === 0}
+        >
+          Find Food
+        </button>
+        <SortOptions handleSort={handleSort} />
+      </div>
       {loading ? (
         <p>Fetching Restuarants...</p>
       ) : (
-        <>
+        <div>
           {restaurants.length > 0 ? (
             <ul>
               {restaurants.map((restaurant, index) => {
@@ -190,7 +191,14 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
                     key={index}
                     onClick={() => getRestaurantInfoDummy(place_id)}
                   >
-                    {name} ({distance} miles away) {rating}
+                    <p>
+                      {" "}
+                      {index + 1}. {name}{" "}
+                      <span style={{ width: 50 }}>
+                        {rating} <FaStar className="ratingStar" />
+                      </span>
+                    </p>
+                    <p>&nbsp;&nbsp;&nbsp;{distance} miles away</p>
                   </li>
                 );
               })}
@@ -198,7 +206,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
           ) : (
             <p>No Results Found</p>
           )}
-        </>
+        </div>
       )}
     </div>
   );

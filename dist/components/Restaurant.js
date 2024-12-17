@@ -1,11 +1,12 @@
-import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { FaSquarePhoneFlip, FaMapLocationDot, FaReply } from "react-icons/fa6";
 import Reviews from "./Reviews.js";
 const Restaurant = _ref => {
   let {
     restaurant,
     close,
-    distanceMap
+    distanceMap,
+    height
   } = _ref;
   const {
     url,
@@ -16,14 +17,20 @@ const Restaurant = _ref => {
     editorial_summary
   } = restaurant;
   const strippedPhone = international_phone_number.split("-").join("");
-  debugger;
   return _jsxs("div", {
-    children: [_jsxs("h1", {
-      children: [name, " (", distanceMap[place_id] + " miles away", ")"]
-    }), _jsx("p", {
-      children: editorial_summary.overview
+    style: {
+      height: height - 10 + "px"
+    },
+    children: [" ", _jsx("h2", {
+      style: {
+        margin: 10
+      },
+      children: name
+    }), _jsxs("p", {
+      children: [editorial_summary.overview, " (", distanceMap[place_id] + " miles away", ")"]
     }), _jsx(Reviews, {
-      reviews: reviews
+      reviews: reviews,
+      height: height - 230
     }), _jsxs("div", {
       className: "restaurant-footer",
       children: [_jsx(FaReply, {

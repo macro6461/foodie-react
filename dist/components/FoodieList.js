@@ -25,9 +25,10 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect } from "react";
 import dummyData from "../dummy.json";
+import { FaStar } from "react-icons/fa6";
 import SortOptions from "./SortOptions.js";
 const FoodieList = _ref => {
   let {
@@ -146,27 +147,30 @@ const FoodieList = _ref => {
       if (sortType === "distance") {
         return a[sortType] < b[sortType] ? -1 : 1;
       } else {
-        return a[sortType] < b[sortType] ? -1 : 1;
+        return a[sortType] > b[sortType] ? -1 : 1;
       }
     });
     setRestaurants(res);
   };
-  console.log("RESTAURANTS: ", restaurants);
   return _jsxs("div", {
-    children: [_jsx("input", {
-      id: "textInput",
-      type: "text",
-      value: textSearch,
-      onChange: handleChange
-    }), _jsx("button", {
-      onClick: () => fetchNearbyRestaurantsDummy(),
-      disabled: textSearch.length === 0,
-      children: "Find Food"
-    }), _jsx(SortOptions, {
-      handleSort: handleSort
+    className: "foodieListContainer",
+    children: [_jsxs("div", {
+      className: "foodieListHeader",
+      children: [_jsx("input", {
+        id: "textInput",
+        type: "text",
+        value: textSearch,
+        onChange: handleChange
+      }), _jsx("button", {
+        onClick: () => fetchNearbyRestaurantsDummy(),
+        disabled: textSearch.length === 0,
+        children: "Find Food"
+      }), _jsx(SortOptions, {
+        handleSort: handleSort
+      })]
     }), loading ? _jsx("p", {
       children: "Fetching Restuarants..."
-    }) : _jsx(_Fragment, {
+    }) : _jsx("div", {
       children: restaurants.length > 0 ? _jsx("ul", {
         children: restaurants.map((restaurant, index) => {
           const {
@@ -177,7 +181,18 @@ const FoodieList = _ref => {
           } = restaurant;
           return _jsxs("li", {
             onClick: () => getRestaurantInfoDummy(place_id),
-            children: [name, " (", distance, " miles away) ", rating]
+            children: [_jsxs("p", {
+              children: [" ", index + 1, ". ", name, " ", _jsxs("span", {
+                style: {
+                  width: 50
+                },
+                children: [rating, " ", _jsx(FaStar, {
+                  className: "ratingStar"
+                })]
+              })]
+            }), _jsxs("p", {
+              children: ["\u00A0\u00A0\u00A0", distance, " miles away"]
+            })]
           }, index);
         })
       }) : _jsx("p", {

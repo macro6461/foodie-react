@@ -21,6 +21,7 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
   const [error, setError] = useState(null);
   // Ref to store the map
   const distanceMap = useRef<object>({});
+  const heightRef = useRef<number>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -40,15 +41,29 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
   }, []);
 
   useEffect(() => {
+    handleHeight();
+  }, [window.innerHeight]);
+
+  useEffect(() => {
     if (showFoodie) {
       runSplash();
     }
   }, [showFoodie]);
 
+  const handleHeight = () => {
+    let height = window.innerHeight - 20;
+    let cont = document.getElementsByClassName("container")[0] as HTMLElement;
+    if (cont) {
+      cont.style.height = `${height}px`;
+      heightRef.current = height;
+    }
+  };
+
   const runSplash = () => {
     setShowSplash(true);
     setTimeout(() => {
       setShowSplash(false);
+      handleHeight();
     }, 6000);
   };
 
@@ -110,6 +125,7 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
                   restaurant={currentRestaurant}
                   close={() => setCurrentRestaurant(null)}
                   distanceMap={distanceMap.current}
+                  height={heightRef.current}
                 />
               ) : (
                 <FoodieList

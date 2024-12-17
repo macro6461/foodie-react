@@ -20,6 +20,7 @@ const FoodieReact = _ref => {
   const [error, setError] = useState(null);
   // Ref to store the map
   const distanceMap = useRef({});
+  const heightRef = useRef(null);
   useEffect(() => {
     if (navigator.geolocation) {
       return navigator.geolocation.getCurrentPosition(position => {
@@ -34,14 +35,26 @@ const FoodieReact = _ref => {
     }
   }, []);
   useEffect(() => {
+    handleHeight();
+  }, [window.innerHeight]);
+  useEffect(() => {
     if (showFoodie) {
       runSplash();
     }
   }, [showFoodie]);
+  const handleHeight = () => {
+    let height = window.innerHeight - 20;
+    let cont = document.getElementsByClassName("container")[0];
+    if (cont) {
+      cont.style.height = "".concat(height, "px");
+      heightRef.current = height;
+    }
+  };
   const runSplash = () => {
     setShowSplash(true);
     setTimeout(() => {
       setShowSplash(false);
+      handleHeight();
     }, 6000);
   };
   const toRadians = degrees => {
@@ -78,7 +91,8 @@ const FoodieReact = _ref => {
         children: currentRestaurant ? _jsx(Restaurant, {
           restaurant: currentRestaurant,
           close: () => setCurrentRestaurant(null),
-          distanceMap: distanceMap.current
+          distanceMap: distanceMap.current,
+          height: heightRef.current
         }) : _jsx(FoodieList, {
           GMapsApiKey: GMapsApiKey,
           radius: radius,

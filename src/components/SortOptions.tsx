@@ -14,7 +14,7 @@ const SortOptions = ({ handleSort }) => {
 
   return (
     <div>
-      <h3>Select an option:</h3>
+      <span>Sort By: </span>
       <label>
         <input
           type="radio"
