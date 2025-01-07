@@ -1,4 +1,4 @@
-# foodie-react v1.0.4
+# foodie-react v1.0.5
 
 ![Foodie React Main](./assets/main.png)
 
