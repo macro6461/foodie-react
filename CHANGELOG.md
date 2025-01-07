@@ -2,6 +2,12 @@
 
 This file tracks released versions with the changes made to this project.
 
+## Version 1.0.8
+
+### Fixed
+
+- Added keywords, author, repository, to package.json and added assets to list of files for NPM.
+
 ## Version 1.0.7
 
 ### Added
