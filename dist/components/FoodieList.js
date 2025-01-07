@@ -33,6 +33,7 @@ import Error from "./Error.js";
 const FoodieList = _ref => {
   let {
     setCurrentRestaurant,
+    hide,
     devPort,
     GMapsApiKey,
     radius,
@@ -40,14 +41,13 @@ const FoodieList = _ref => {
     latitude,
     longitude,
     setError,
-    previousRestaurant,
     error
   } = _ref;
   const [textSearch, setTextSearch] = useState("");
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (latitude && longitude && !previousRestaurant) {
+    if (latitude && longitude) {
       initFoodieReact();
     } else {
       setError("Geolocation Not Found.");
@@ -143,8 +143,12 @@ const FoodieList = _ref => {
     });
     setRestaurants(res);
   };
+  console.log("HIDE: ", hide);
   return _jsxs("div", {
     className: "foodieListContainer",
+    style: {
+      display: hide ? "none" : "block"
+    },
     children: [_jsxs("div", {
       className: "foodieListHeader",
       children: [_jsx("input", {

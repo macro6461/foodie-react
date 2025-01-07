@@ -21,7 +21,6 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
   // Ref to store the map
   const distanceMap = useRef<object>({});
   const heightRef = useRef<number>(null);
-  const previousRestaurant = useRef<FoodieRestaurant | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -104,17 +103,12 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
 
   const handleShowFoodie = (show: boolean) => {
     setShowFoodie(show);
-    if (!show) {
-      previousRestaurant.current = null;
-    } else {
+    if (show) {
       runSplash();
     }
   };
 
   const handleSetCurrentRestaurant = (restaurant: FoodieRestaurant) => {
-    if (!restaurant){
-      previousRestaurant.current = currentRestaurant;
-    }
     setCurrentRestaurant(restaurant);
   };
 
@@ -132,7 +126,7 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
         <Splash />
       ) : (
         <>
-        {showFoodie ? (
+        {showFoodie ? 
           <>
           {currentRestaurant ? (
                 <Restaurant
@@ -142,22 +136,21 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
                   distanceMap={distanceMap.current}
                   height={heightRef.current}
                 />
-              ) : (
-                <FoodieList
+              ) : null }
+              <FoodieList
                 error={error}
                   GMapsApiKey={GMapsApiKey}
                   radius={radius}
                   devPort={devPort}
                   setCurrentRestaurant={handleSetCurrentRestaurant}
-                  previousRestaurant={previousRestaurant.current} // Do not re-run getAll when switching back to list from restaurant.
                   distanceToAndFromHaversine={distanceToAndFromHaversine}
                   setError={setError}
                   latitude={latitude}
                   longitude={longitude}
+                  hide={!!currentRestaurant}
                 />
-              )}
           </>
-        ) : null}
+        : null}
             </>
       )}
     </div>

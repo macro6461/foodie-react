@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FoodieReactProps, FoodieRestaurant } from "../types";
 import { LatLong } from "../types";
 import { FaStar } from "react-icons/fa6";
@@ -7,7 +7,6 @@ import Error from "./Error";
 
 interface FoodieListProps {
   setCurrentRestaurant: React.Dispatch<React.SetStateAction<FoodieRestaurant>>;
-  previousRestaurant: FoodieRestaurant;
   distanceToAndFromHaversine: (
     start: LatLong,
     stop: LatLong,
@@ -16,11 +15,13 @@ interface FoodieListProps {
   latitude: number | null;
   longitude: number | null;
   setError: React.Dispatch<React.SetStateAction<string>>;
+  hide: boolean;
   error: string | null;
 }
 
 const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   setCurrentRestaurant,
+  hide,
   devPort,
   GMapsApiKey,
   radius,
@@ -28,16 +29,16 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   latitude,
   longitude,
   setError,
-  previousRestaurant,
+
   error,
 }) => {
   const [textSearch, setTextSearch] = useState("");
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
 
   useEffect(() => {
-    if (latitude && longitude && !previousRestaurant) {
+    if (latitude && longitude) {
       initFoodieReact();
     } else {
       setError("Geolocation Not Found.");
@@ -148,8 +149,10 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
     setRestaurants(res);
   };
 
+  console.log("HIDE: ",hide);
+
   return (
-    <div className="foodieListContainer">
+    <div className="foodieListContainer" style={{display: hide ? "none" : "block"}}>
       <div className="foodieListHeader">
         <input
           id="textInput"

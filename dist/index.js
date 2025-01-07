@@ -20,7 +20,6 @@ const FoodieReact = _ref => {
   // Ref to store the map
   const distanceMap = useRef({});
   const heightRef = useRef(null);
-  const previousRestaurant = useRef(null);
   useEffect(() => {
     if (navigator.geolocation) {
       return navigator.geolocation.getCurrentPosition(position => {
@@ -76,16 +75,11 @@ const FoodieReact = _ref => {
   };
   const handleShowFoodie = show => {
     setShowFoodie(show);
-    if (!show) {
-      previousRestaurant.current = null;
-    } else {
+    if (show) {
       runSplash();
     }
   };
   const handleSetCurrentRestaurant = restaurant => {
-    if (!restaurant) {
-      previousRestaurant.current = currentRestaurant;
-    }
     setCurrentRestaurant(restaurant);
   };
   let containerName = "container ";
@@ -96,25 +90,25 @@ const FoodieReact = _ref => {
       className: "opener",
       onClick: () => handleShowFoodie(!showFoodie)
     }), showSplash ? _jsx(Splash, {}) : _jsx(_Fragment, {
-      children: showFoodie ? _jsx(_Fragment, {
-        children: currentRestaurant ? _jsx(Restaurant, {
+      children: showFoodie ? _jsxs(_Fragment, {
+        children: [currentRestaurant ? _jsx(Restaurant, {
           error: error,
           restaurant: currentRestaurant,
           close: () => setCurrentRestaurant(null),
           distanceMap: distanceMap.current,
           height: heightRef.current
-        }) : _jsx(FoodieList, {
+        }) : null, _jsx(FoodieList, {
           error: error,
           GMapsApiKey: GMapsApiKey,
           radius: radius,
           devPort: devPort,
           setCurrentRestaurant: handleSetCurrentRestaurant,
-          previousRestaurant: previousRestaurant.current,
           distanceToAndFromHaversine: distanceToAndFromHaversine,
           setError: setError,
           latitude: latitude,
-          longitude: longitude
-        })
+          longitude: longitude,
+          hide: !!currentRestaurant
+        })]
       }) : null
     })]
   });
