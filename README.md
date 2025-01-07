@@ -1,6 +1,6 @@
-# foodie-react v1.0.5
+# foodie-react v1.0.6
 
-![Foodie React Main](./assets/main.png)
+![Foodie React Main](./assets/main_new.png)
 
 This is the source code for the upcoming `foodie-react` NPM package: a package that React developers can use to insert an instant restaurant search pane in their app.
 
