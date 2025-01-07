@@ -185,7 +185,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
                     <p>
                       {" "}
                       {index + 1}. {name}{" "}
-                      <span style={{ width: 50 }}>
+                      <span className="ratingStarContainer">
                         {rating} <FaStar className="ratingStar" />
                       </span>
                     </p>
