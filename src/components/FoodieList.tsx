@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { FoodieReactProps, FoodieRestaurant } from "../types";
 import { LatLong } from "../types";
-import dummyData from "../dummy.json";
 import { FaStar } from "react-icons/fa6";
 import SortOptions from "./SortOptions";
+import Error from "./Error";
 
 interface FoodieListProps {
   setCurrentRestaurant: React.Dispatch<React.SetStateAction<FoodieRestaurant>>;
-  currentRestaurant: FoodieRestaurant;
+  previousRestaurant: FoodieRestaurant;
   distanceToAndFromHaversine: (
     start: LatLong,
     stop: LatLong,
     placeId: string
   ) => number;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   setError: React.Dispatch<React.SetStateAction<string>>;
+  error: string | null;
 }
 
 const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   setCurrentRestaurant,
-  autoStart,
   devPort,
   GMapsApiKey,
   radius,
@@ -28,24 +28,25 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   latitude,
   longitude,
   setError,
+  previousRestaurant,
+  error,
 }) => {
   const [textSearch, setTextSearch] = useState("");
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
-    initFoodieReact();
-  }, [latitude, longitude]);
-
-  const initFoodieReact = () => {
-    if (latitude && longitude) {
-      setError(null); // Clear previous errors if any
-      if (autoStart) {
-        fetchNearbyRestaurantsDummy();
-      }
+    if (latitude && longitude && !previousRestaurant) {
+      initFoodieReact();
     } else {
       setError("Geolocation Not Found.");
     }
+  }, [latitude, longitude]);
+
+  const initFoodieReact = () => {
+      setError(null); // Clear previous errors if any
+      fetchNearbyRestaurants()
   };
 
   const fetchNearbyRestaurants = async (lat?: number, long?: number) => {
@@ -84,8 +85,8 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
   const getRestaurantInfo = async (id: string) => {
     const URL =
       process.env.NODE_ENV === "development"
-        ? `http://localhost:${devPort}/foodie/getRestaurant?place/details/json?placeid=${id}}&key=${GMapsApiKey}`
-        : `https://maps.googleapis.com/maps/api/place/details/json?placeid=${id}}&key=${GMapsApiKey}`;
+        ? `http://localhost:${devPort}/foodie/getRestaurant?place_id=${id}&key=${GMapsApiKey}`
+        : `https://maps.googleapis.com/maps/api/place/details/json?place_id=${id}&key=${GMapsApiKey}`;
 
     try {
       const response = await fetch(URL);
@@ -94,7 +95,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
       if (data.status === "OK") {
         // Process the restaurant data here
         setLoading(false);
-        setCurrentRestaurant(data); // This will contain the list of nearby restaurants
+        setCurrentRestaurant(data.result);
       } else {
         setLoading(false);
         setError("Error fetching data: " + data.status);
@@ -105,20 +106,6 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
       setError("Error fetching data: " + error);
       return false;
     }
-  };
-
-  const fetchNearbyRestaurantsDummy = async (lat?: number, long?: number) => {
-    addDistanceToResultsAndFilter(
-      dummyData.all_restuarants.results as unknown as FoodieRestaurant[]
-    );
-    setLoading(false);
-  };
-
-  const getRestaurantInfoDummy = async (id: string) => {
-    setCurrentRestaurant(
-      dummyData.restuarant_result.result as unknown as FoodieRestaurant
-    );
-    setLoading(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,13 +158,14 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
           onChange={handleChange} // Listen for changes to the input value
         />
         <button
-          onClick={() => fetchNearbyRestaurantsDummy()}
+          onClick={() => fetchNearbyRestaurants()}
           disabled={textSearch.length === 0}
         >
           Find Food
         </button>
         <SortOptions handleSort={handleSort} />
       </div>
+      {error ? <Error error={error} /> : null}
       {loading ? (
         <p>Fetching Restuarants...</p>
       ) : (
@@ -189,7 +177,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
                 return (
                   <li
                     key={index}
-                    onClick={() => getRestaurantInfoDummy(place_id)}
+                    onClick={() => getRestaurantInfo(place_id)}
                   >
                     <p>
                       {" "}

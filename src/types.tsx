@@ -2,7 +2,6 @@
 type FoodieReactProps = {
   GMapsApiKey: string; // Prop is required and must be a string
   radius?: number;
-  autoStart?: boolean;
   devPort?: number;
 };
 

@@ -1,11 +1,11 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { FaPizzaSlice, FaHandshakeSimple } from "react-icons/fa6";
+import { FaBowlFood, FaHandshakeSimple } from "react-icons/fa6";
 const Splash = () => {
   return _jsxs("div", {
     className: "splash",
     children: [_jsx("h1", {
       children: "Welcome to Foodie for React!"
-    }), _jsx(FaPizzaSlice, {
+    }), _jsx(FaBowlFood, {
       className: "splashPizza"
     }), _jsxs("h4", {
       className: "splashSubtitle",

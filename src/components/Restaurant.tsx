@@ -2,6 +2,7 @@ import React from "react";
 import { FaSquarePhoneFlip, FaMapLocationDot, FaReply } from "react-icons/fa6";
 import Reviews from "./Reviews";
 import { FoodieRestaurant } from "../types";
+import Error from "./Error";
 
 // Define the type for the props
 interface RestaurantProps {
@@ -9,6 +10,7 @@ interface RestaurantProps {
   close: () => void;
   distanceMap: object;
   height: number;
+  error: string | null;
 }
 
 const Restaurant: React.FC<RestaurantProps> = ({
@@ -16,6 +18,7 @@ const Restaurant: React.FC<RestaurantProps> = ({
   close,
   distanceMap,
   height,
+  error,
 }) => {
   const {
     url,
@@ -30,13 +33,14 @@ const Restaurant: React.FC<RestaurantProps> = ({
 
   return (
     <div style={{ height: height - 10 + "px" }}>
-      {" "}
-      {/* make it 10px shorter than parent container to allow for margin in header without overflow.*/}
-      <h2 style={{ margin: 10 }}>{name}</h2>
+      {error ? <Error error={error} /> : (
+        <>
+        <h2 style={{ margin: 10 }}>{name}</h2>
       <p>
         {editorial_summary.overview} ({distanceMap[place_id] + " miles away"})
       </p>
       <Reviews reviews={reviews} height={height - 230} />
+      </>)}
       <div className="restaurant-footer">
         <FaReply title="Return to List" onClick={() => close()} />
         <FaSquarePhoneFlip

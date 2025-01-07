@@ -8,7 +8,7 @@
     [
       "babel-plugin-transform-rename-import",
       {
-        "original": "^\\.\\.?\\/(.+/)?(Restaurant|FoodieList|Reviews|Splash|SortOptions)$",
+        "original": "^\\.\\.?\\/(.+/)?(Restaurant|FoodieList|Reviews|Splash|SortOptions|Error)$",
         "replacement": "./$1$2.js"
       }
     ],

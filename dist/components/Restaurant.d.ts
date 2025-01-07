@@ -5,6 +5,7 @@ interface RestaurantProps {
     close: () => void;
     distanceMap: object;
     height: number;
+    error: string | null;
 }
 declare const Restaurant: React.FC<RestaurantProps>;
 export default Restaurant;

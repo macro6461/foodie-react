@@ -27,36 +27,35 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 };
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect } from "react";
-import dummyData from "../dummy.json";
 import { FaStar } from "react-icons/fa6";
 import SortOptions from "./SortOptions.js";
+import Error from "./Error.js";
 const FoodieList = _ref => {
   let {
     setCurrentRestaurant,
-    autoStart,
     devPort,
     GMapsApiKey,
     radius,
     distanceToAndFromHaversine,
     latitude,
     longitude,
-    setError
+    setError,
+    previousRestaurant,
+    error
   } = _ref;
   const [textSearch, setTextSearch] = useState("");
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    initFoodieReact();
-  }, [latitude, longitude]);
-  const initFoodieReact = () => {
-    if (latitude && longitude) {
-      setError(null); // Clear previous errors if any
-      if (autoStart) {
-        fetchNearbyRestaurantsDummy();
-      }
+    if (latitude && longitude && !previousRestaurant) {
+      initFoodieReact();
     } else {
       setError("Geolocation Not Found.");
     }
+  }, [latitude, longitude]);
+  const initFoodieReact = () => {
+    setError(null); // Clear previous errors if any
+    fetchNearbyRestaurants();
   };
   const fetchNearbyRestaurants = (lat, long) => __awaiter(void 0, void 0, void 0, function* () {
     setLoading(true);
@@ -82,14 +81,14 @@ const FoodieList = _ref => {
     }
   });
   const getRestaurantInfo = id => __awaiter(void 0, void 0, void 0, function* () {
-    const URL = process.env.NODE_ENV === "development" ? "http://localhost:".concat(devPort, "/foodie/getRestaurant?place/details/json?placeid=").concat(id, "}&key=").concat(GMapsApiKey) : "https://maps.googleapis.com/maps/api/place/details/json?placeid=".concat(id, "}&key=").concat(GMapsApiKey);
+    const URL = process.env.NODE_ENV === "development" ? "http://localhost:".concat(devPort, "/foodie/getRestaurant?place_id=").concat(id, "&key=").concat(GMapsApiKey) : "https://maps.googleapis.com/maps/api/place/details/json?place_id=".concat(id, "&key=").concat(GMapsApiKey);
     try {
       const response = yield fetch(URL);
       const data = yield response.json();
       if (data.status === "OK") {
         // Process the restaurant data here
         setLoading(false);
-        setCurrentRestaurant(data); // This will contain the list of nearby restaurants
+        setCurrentRestaurant(data.result);
       } else {
         setLoading(false);
         setError("Error fetching data: " + data.status);
@@ -100,14 +99,6 @@ const FoodieList = _ref => {
       setError("Error fetching data: " + error);
       return false;
     }
-  });
-  const fetchNearbyRestaurantsDummy = (lat, long) => __awaiter(void 0, void 0, void 0, function* () {
-    addDistanceToResultsAndFilter(dummyData.all_restuarants.results);
-    setLoading(false);
-  });
-  const getRestaurantInfoDummy = id => __awaiter(void 0, void 0, void 0, function* () {
-    setCurrentRestaurant(dummyData.restuarant_result.result);
-    setLoading(false);
   });
   const handleChange = e => {
     setTextSearch(e.target.value);
@@ -162,13 +153,15 @@ const FoodieList = _ref => {
         value: textSearch,
         onChange: handleChange
       }), _jsx("button", {
-        onClick: () => fetchNearbyRestaurantsDummy(),
+        onClick: () => fetchNearbyRestaurants(),
         disabled: textSearch.length === 0,
         children: "Find Food"
       }), _jsx(SortOptions, {
         handleSort: handleSort
       })]
-    }), loading ? _jsx("p", {
+    }), error ? _jsx(Error, {
+      error: error
+    }) : null, loading ? _jsx("p", {
       children: "Fetching Restuarants..."
     }) : _jsx("div", {
       children: restaurants.length > 0 ? _jsx("ul", {
@@ -180,7 +173,7 @@ const FoodieList = _ref => {
             rating
           } = restaurant;
           return _jsxs("li", {
-            onClick: () => getRestaurantInfoDummy(place_id),
+            onClick: () => getRestaurantInfo(place_id),
             children: [_jsxs("p", {
               children: [" ", index + 1, ". ", name, " ", _jsxs("span", {
                 style: {

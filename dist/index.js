@@ -9,18 +9,18 @@ const FoodieReact = _ref => {
   let {
     GMapsApiKey,
     radius = 10000,
-    autoStart = false,
     devPort = 8080
   } = _ref;
   const [currentRestaurant, setCurrentRestaurant] = useState(null);
   const [showFoodie, setShowFoodie] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
-  const [latitude, setLatitude] = useState(37.7749); // default to NYC
-  const [longitude, setLongitude] = useState(-122.4194); // default to NYC
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [error, setError] = useState(null);
   // Ref to store the map
   const distanceMap = useRef({});
   const heightRef = useRef(null);
+  const previousRestaurant = useRef(null);
   useEffect(() => {
     if (navigator.geolocation) {
       return navigator.geolocation.getCurrentPosition(position => {
@@ -74,38 +74,48 @@ const FoodieReact = _ref => {
     map[placeId] = (R * c).toFixed(2);
     return parseFloat((R * c).toFixed(2));
   };
+  const handleShowFoodie = show => {
+    setShowFoodie(show);
+    if (!show) {
+      previousRestaurant.current = null;
+    } else {
+      runSplash();
+    }
+  };
+  const handleSetCurrentRestaurant = restaurant => {
+    if (!restaurant) {
+      previousRestaurant.current = currentRestaurant;
+    }
+    setCurrentRestaurant(restaurant);
+  };
   let containerName = "container ";
   containerName += showFoodie ? "visible" : "hidden";
   return _jsxs("div", {
     className: containerName,
     children: [_jsx(FaPizzaSlice, {
       className: "opener",
-      onClick: () => setShowFoodie(!showFoodie)
+      onClick: () => handleShowFoodie(!showFoodie)
     }), showSplash ? _jsx(Splash, {}) : _jsx(_Fragment, {
-      children: error ? _jsx("h3", {
-        style: {
-          color: "red"
-        },
-        children: error
-      }) : _jsx(_Fragment, {
+      children: showFoodie ? _jsx(_Fragment, {
         children: currentRestaurant ? _jsx(Restaurant, {
+          error: error,
           restaurant: currentRestaurant,
           close: () => setCurrentRestaurant(null),
           distanceMap: distanceMap.current,
           height: heightRef.current
         }) : _jsx(FoodieList, {
+          error: error,
           GMapsApiKey: GMapsApiKey,
           radius: radius,
-          autoStart: autoStart,
           devPort: devPort,
-          setCurrentRestaurant: setCurrentRestaurant,
-          currentRestaurant: currentRestaurant,
+          setCurrentRestaurant: handleSetCurrentRestaurant,
+          previousRestaurant: previousRestaurant.current,
           distanceToAndFromHaversine: distanceToAndFromHaversine,
           setError: setError,
           latitude: latitude,
           longitude: longitude
         })
-      })
+      }) : null
     })]
   });
 };

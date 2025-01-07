@@ -9,19 +9,19 @@ import { FaPizzaSlice } from "react-icons/fa6";
 const FoodieReact: React.FC<FoodieReactProps> = ({
   GMapsApiKey,
   radius = 10000,
-  autoStart = false,
   devPort = 8080,
 }) => {
   const [currentRestaurant, setCurrentRestaurant] =
     useState<FoodieRestaurant | null>(null);
   const [showFoodie, setShowFoodie] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
-  const [latitude, setLatitude] = useState(37.7749); // default to NYC
-  const [longitude, setLongitude] = useState(-122.4194); // default to NYC
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null); 
   const [error, setError] = useState(null);
   // Ref to store the map
   const distanceMap = useRef<object>({});
   const heightRef = useRef<number>(null);
+  const previousRestaurant = useRef<FoodieRestaurant | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -102,6 +102,22 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
     return parseFloat((R * c).toFixed(2));
   };
 
+  const handleShowFoodie = (show: boolean) => {
+    setShowFoodie(show);
+    if (!show) {
+      previousRestaurant.current = null;
+    } else {
+      runSplash();
+    }
+  };
+
+  const handleSetCurrentRestaurant = (restaurant: FoodieRestaurant) => {
+    if (!restaurant){
+      previousRestaurant.current = currentRestaurant;
+    }
+    setCurrentRestaurant(restaurant);
+  };
+
   let containerName = "container ";
 
   containerName += showFoodie ? "visible" : "hidden";
@@ -110,18 +126,17 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
     <div className={containerName}>
       <FaPizzaSlice
         className="opener"
-        onClick={() => setShowFoodie(!showFoodie)}
+        onClick={() => handleShowFoodie(!showFoodie)}
       />
       {showSplash ? (
         <Splash />
       ) : (
         <>
-          {error ? (
-            <h3 style={{ color: "red" }}>{error}</h3>
-          ) : (
-            <>
-              {currentRestaurant ? (
+        {showFoodie ? (
+          <>
+          {currentRestaurant ? (
                 <Restaurant
+                error={error}
                   restaurant={currentRestaurant}
                   close={() => setCurrentRestaurant(null)}
                   distanceMap={distanceMap.current}
@@ -129,21 +144,21 @@ const FoodieReact: React.FC<FoodieReactProps> = ({
                 />
               ) : (
                 <FoodieList
+                error={error}
                   GMapsApiKey={GMapsApiKey}
                   radius={radius}
-                  autoStart={autoStart}
                   devPort={devPort}
-                  setCurrentRestaurant={setCurrentRestaurant}
-                  currentRestaurant={currentRestaurant}
+                  setCurrentRestaurant={handleSetCurrentRestaurant}
+                  previousRestaurant={previousRestaurant.current} // Do not re-run getAll when switching back to list from restaurant.
                   distanceToAndFromHaversine={distanceToAndFromHaversine}
                   setError={setError}
                   latitude={latitude}
                   longitude={longitude}
                 />
               )}
+          </>
+        ) : null}
             </>
-          )}
-        </>
       )}
     </div>
   );

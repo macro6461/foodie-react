@@ -27,3 +27,5 @@ yarn-error.log*
 example/.env
 
 dummy.json
+dummyFunctions.txt
+

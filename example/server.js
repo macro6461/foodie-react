@@ -23,9 +23,9 @@ app.get("/foodie/getAll", async (req, res) => {
   }
 });
 
-app.get("/foodie/getRestuarant", async (req, res) => {
-  const { placeid, key } = req.query;
-  const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeid}&key=${key}`;
+app.get("/foodie/getRestaurant", async (req, res) => {
+  const { place_id, key } = req.query;
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&key=${key}`;
   try {
     const response = await axios.get(url);
     res.json(response.data);

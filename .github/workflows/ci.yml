@@ -1,0 +1,31 @@
+name: Publish to NPM
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write # Ensure the bot has write permissions to the repository
+
+jobs:
+  publish-to-npm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all commits and tags
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3" # You can specify a specific Python version if needed
+
+      - name: Set Variables for Script
+        run: |
+          echo "NPM_TOKEN=${{ secrets.NPM_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Run Python script to publish to NPM
+        id: publish_npm
+        run: |
+          python ./buildscripts/publish_to_npm.py

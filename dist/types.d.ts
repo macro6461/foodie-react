@@ -1,7 +1,6 @@
 type FoodieReactProps = {
     GMapsApiKey: string;
     radius?: number;
-    autoStart?: boolean;
     devPort?: number;
 };
 type EditorialSummary = {
