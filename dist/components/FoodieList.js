@@ -180,9 +180,7 @@ const FoodieList = _ref => {
             onClick: () => getRestaurantInfo(place_id),
             children: [_jsxs("p", {
               children: [" ", index + 1, ". ", name, " ", _jsxs("span", {
-                style: {
-                  width: 50
-                },
+                className: "ratingStarContainer",
                 children: [rating, " ", _jsx(FaStar, {
                   className: "ratingStar"
                 })]
