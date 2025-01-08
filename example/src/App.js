@@ -10,7 +10,6 @@ function App() {
         GMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
         devPort={process.env.REACT_APP_PORT}
         radius={5000}
-        autoStart={true}
       />
       <p>
         The standard Lorem Ipsum passage, used since the 1500s "Lorem ipsum
