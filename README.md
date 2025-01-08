@@ -1,4 +1,4 @@
-# foodie-react v1.0.10
+# foodie-react v1.0.11
 
 ![Foodie React Main](./assets/main_new.png)
 
@@ -51,11 +51,11 @@ export default App;
 
 The `FoodieReact` component will automatically start searching for restaurants when the component is mounted. The component will appear as a floating button in the middle-left of the screen. You click it to open the list of restuarants.
 
-![Foodie React List](./assets/list.png).
+![Foodie React List](./assets/list.png)
 
 Once the list is open, you can search more specifically by typing in the search bar and clicking the "Find Food" button. You can also click on individual restaurants to get more information about them.
 
-![Foodie React Restaurant](./assets/restaurant.png).
+![Foodie React Restaurant](./assets/restaurant.png)
 
 ## The Local Server
 

@@ -2,12 +2,13 @@
 
 This file tracks released versions with the changes made to this project.
 
-## Version 1.0.10
+## Version 1.0.11
 
 ### Fixed
 
 - Made `index.css` more declarative for styles that might be overriden by apps using it.
   - First noticed this when using Vite for the test app.
+- Removed `.` from `README.md` after `![Foodie React Main](./assets/list.png)` and `![Foodie React List](./assets/restaurant.png)`,
 
 ## Version 1.0.9
 
