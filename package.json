@@ -1,6 +1,6 @@
 {
     "name": "foodie-react",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "A package to offer a built-in component for searching and viewing restuarants nearby in your React App.",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
