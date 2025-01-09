@@ -170,7 +170,7 @@ const FoodieList: React.FC<FoodieListProps & FoodieReactProps> = ({
       </div>
       {error ? <Error error={error} /> : null}
       {loading ? (
-        <p>Fetching Restuarants...</p>
+        <p>Fetching Restaurants...</p>
       ) : (
         <div>
           {restaurants.length > 0 ? (

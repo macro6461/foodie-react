@@ -90,7 +90,7 @@ ul li p:nth-child(2){
     cursor: pointer;
 }
 
-.restaurant-footer {
+.restaurantFooter {
     align-items: center;
     bottom: 5px;
     display: flex;
@@ -99,6 +99,7 @@ ul li p:nth-child(2){
     width: 100%;
     left: 0px;
     position: absolute;
+    color: black;
 }
 
 .foodieListContainer{

@@ -1,10 +1,10 @@
-# foodie-react v1.0.12
+# foodie-react v1.0.13
 
 ![Foodie React Main](./assets/main_new.png)
 
 This is the source code for the upcoming `foodie-react` NPM package: a package that React developers can use to insert an instant restaurant search pane in their app.
 
-A few years ago, I was working with someone who said, "I want you to be able to order Pizza from our app". That encouraged me to come up with [`foodie`](https://www.npmjs.com/package/foodie), the command line interface one can use to find restuarants nearby.
+A few years ago, I was working with someone who said, "I want you to be able to order Pizza from our app". That encouraged me to come up with [`foodie`](https://www.npmjs.com/package/foodie), the command line interface one can use to find restarants nearby.
 
 Here we are years later, and I am inspired to bring that logic into a genuine user interface. No matter what your React app does, with `foodie-react`, your React app will definitely be able to order pizza-or any cuisine for that matter!
 
@@ -49,7 +49,7 @@ export default App;
 | devPort | number | No | 3000 | Port number for development server |
 | radius | number | No | 1000 | Search radius in meters for nearby restaurants |
 
-The `FoodieReact` component will automatically start searching for restaurants when the component is mounted. The component will appear as a floating button in the middle-left of the screen. You click it to open the list of restuarants.
+The `FoodieReact` component will automatically start searching for restaurants when the component is mounted. The component will appear as a floating button in the middle-left of the screen. You click it to open the list of restaurants.
 
 ![Foodie React List](./assets/list.png)
 
@@ -89,7 +89,7 @@ app.get("/foodie/getAll", async (req, res) => {
   }
 });
 
-app.get("/foodie/getRestuarant", async (req, res) => {
+app.get("/foodie/getRestaurant", async (req, res) => {
   const { placeid, key } = req.query;
   const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeid}&key=${key}`;
   try {

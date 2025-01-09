@@ -166,7 +166,7 @@ const FoodieList = _ref => {
     }), error ? _jsx(Error, {
       error: error
     }) : null, loading ? _jsx("p", {
-      children: "Fetching Restuarants..."
+      children: "Fetching Restaurants..."
     }) : _jsx("div", {
       children: restaurants.length > 0 ? _jsx("ul", {
         children: restaurants.map((restaurant, index) => {

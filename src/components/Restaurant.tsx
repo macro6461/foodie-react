@@ -41,7 +41,7 @@ const Restaurant: React.FC<RestaurantProps> = ({
       </p>
       <Reviews reviews={reviews} height={height - 230} />
       </>)}
-      <div className="restaurant-footer">
+      <div className="restaurantFooter">
         <FaReply title="Return to List" onClick={() => close()} />
         <FaSquarePhoneFlip
           title="Call Restaurant"

@@ -2,6 +2,12 @@
 
 This file tracks released versions with the changes made to this project.
 
+## Version 1.0.13
+
+### Fixed
+
+- Added `color: black` to `index.css` to fix the footer text color to force color in Vite apps.
+
 ## Version 1.0.12
 
 ### Fixed
